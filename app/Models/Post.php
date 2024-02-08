@@ -14,10 +14,15 @@ class Post extends Model
     protected $fillable = [
     'title',
     'body',
+    'image_url',
     ];
 
     public function getPaginateByLimit(int $limit_count = 5)
    {
     return $this->orderBy('updated_at', 'DESC')->paginate($limit_count);
    }
+   public function like()
+{
+    return $this->belongsTo(User::class);
+}
 }
