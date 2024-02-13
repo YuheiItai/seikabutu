@@ -24,29 +24,39 @@ class PostController extends Controller
     
     public function create()
     {
-        return view('posts.create');
+        $onsens = Onsen::orderBy('count', 'desc')->get();
+        return view('posts.create')->with(['onsens' => $onsens]);
     }
     
-    public function oki()
+    public function ok(Like $like)
     {
-        return view('posts.oki');
+        return view('posts.oki')->with(['onsens' => $like->get()]);
     }
-
-    public function store(Post $post, PostRequest $request) // 引数をRequestからPostRequestにする
+    
+    public function store(Onsen $onsen, Request $request) // 引数をRequestからPostRequestにする
     {
+        $image_url = Cloudinary::upload($request->file('image')->getRealPath())->getSecurePath();
         $input = $request['post'];
-        $post->fill($input)->save();
-        return redirect('/posts/' . $post->id);
+        $input += ['image_url' => $image_url];
+        $onsen->fill($input)->save();
+        return redirect('/posts/' . $onsen->id);
     }
+    
     public function like(Like $like, Request $request)
     {
         $like->user_id = Auth::id();
         $like->onsen_id = $request['onsen'];
         $like->save();
-        $a=$like->first();
-        dd($a->users);
+        $onsen = Onsen::where( 'id',  '=', $request['onsen'])->first();
+        $onsen->count += 1;
+        $onsen->save();
+        //$a=$like->first();
+        //dd($a->users);
         //dd($like->get());
-        return view('posts.oki')->with(['likes' => $like->get()]);
-        
+        return view('posts.oki')->with(['like' => $like->orderBy('id', 'desc')->first(),'onsens' => $like->get()]);
     }
+    public function sho(Post $post)
+{
+    return view('posts.show')->with(['post' => $post]);
+}
 }

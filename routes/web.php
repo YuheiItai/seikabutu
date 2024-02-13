@@ -29,9 +29,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::get('/index', [PostController::class, 'index']);
-Route::get('/posts/oki', [PostController::class, 'oki']);
+Route::get('/posts/ok', [PostController::class, 'ok']);
 Route::get('/posts/create', [PostController::class, 'create']);
 Route::get('/posts/{post}', [PostController::class ,'show']);
 Route::get('/like/{onsen}', [PostController::class ,'like']);
+Route::get('/posts/show', [PostController::class, 'show']); 
+Route::post('/posts', [PostController::class, 'store']);
 
 require __DIR__.'/auth.php';
